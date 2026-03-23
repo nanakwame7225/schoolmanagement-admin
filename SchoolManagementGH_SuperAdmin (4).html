@@ -1,0 +1,793 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SchoolManagement GH — Admin</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#0a0e1a; --surface:#111827; --surface2:#1a2235; --border:#2a3a52;
+  --accent:#00d4ff; --green:#10b981; --red:#ef4444; --gold:#f59e0b; --purple:#7c3aed;
+  --text:#e2e8f0; --text2:#94a3b8; --text3:#64748b;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Sora',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
+.login-screen{display:flex;align-items:center;justify-content:center;min-height:100vh;background:linear-gradient(135deg,#0a0e1a,#0f172a);}
+.login-box{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:40px;width:380px;}
+.login-box h1{font-size:22px;font-weight:800;margin-bottom:4px;}
+.login-box p{color:var(--text3);font-size:13px;margin-bottom:28px;}
+.field{margin-bottom:16px;}
+.field label{display:block;font-size:12px;font-weight:600;color:var(--text2);margin-bottom:6px;text-transform:uppercase;letter-spacing:0.8px;}
+.field input{width:100%;padding:12px 16px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:'Sora',sans-serif;font-size:13px;outline:none;}
+.field input:focus{border-color:var(--accent);}
+.btn{padding:12px 20px;border:none;border-radius:8px;font-family:'Sora',sans-serif;font-size:13px;font-weight:700;cursor:pointer;}
+.btn-primary{background:linear-gradient(135deg,var(--accent),var(--purple));color:#000;width:100%;}
+.btn-secondary{background:var(--surface2);color:var(--text2);border:1px solid var(--border);}
+.btn-danger{background:rgba(239,68,68,0.15);color:var(--red);border:1px solid rgba(239,68,68,0.3);}
+.btn-success{background:rgba(16,185,129,0.15);color:var(--green);border:1px solid rgba(16,185,129,0.3);}
+.btn-sm{padding:6px 12px;font-size:11px;}
+.error{background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.3);border-radius:8px;padding:10px 14px;font-size:12px;color:var(--red);margin-top:12px;display:none;}
+
+/* App */
+#app{display:none;flex-direction:column;min-height:100vh;}
+.header{background:var(--surface);border-bottom:1px solid var(--border);padding:0 24px;height:60px;display:flex;align-items:center;gap:16px;}
+.header h1{font-size:16px;font-weight:800;background:linear-gradient(135deg,var(--accent),var(--purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.header-badge{padding:4px 12px;background:rgba(0,212,255,0.1);border:1px solid rgba(0,212,255,0.2);border-radius:20px;font-size:11px;font-weight:600;color:var(--accent);}
+.header-spacer{flex:1;}
+.logout-btn{background:transparent;border:1px solid var(--border);color:var(--text2);padding:6px 14px;border-radius:8px;cursor:pointer;font-family:'Sora',sans-serif;font-size:12px;}
+.main{padding:24px;max-width:1200px;margin:0 auto;width:100%;}
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-bottom:28px;}
+.stat-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px;}
+.stat-label{font-size:12px;color:var(--text3);font-weight:600;text-transform:uppercase;letter-spacing:0.6px;margin-bottom:8px;}
+.stat-value{font-size:28px;font-weight:800;font-family:'JetBrains Mono',monospace;}
+.stat-value.cyan{color:var(--accent);}
+.stat-value.green{color:var(--green);}
+.stat-value.red{color:var(--red);}
+.stat-value.gold{color:var(--gold);}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px;margin-bottom:20px;}
+.card-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;}
+.card-title{font-size:15px;font-weight:700;}
+table{width:100%;border-collapse:collapse;font-size:13px;}
+th{padding:10px 14px;text-align:left;font-size:11px;color:var(--text3);font-weight:600;text-transform:uppercase;letter-spacing:0.6px;border-bottom:1px solid var(--border);}
+td{padding:10px 14px;border-bottom:1px solid var(--border);}
+.badge{padding:3px 10px;border-radius:20px;font-size:10px;font-weight:700;}
+.badge-active{background:rgba(16,185,129,0.15);color:var(--green);}
+.badge-inactive{background:rgba(239,68,68,0.15);color:var(--red);}
+.badge-expired{background:rgba(245,158,11,0.15);color:var(--gold);}
+.badge-trial{background:rgba(0,212,255,0.15);color:var(--accent);}
+.badge-premium{background:rgba(124,58,237,0.15);color:#a78bfa;}
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:100;display:none;align-items:center;justify-content:center;}
+.modal-overlay.show{display:flex;}
+.modal{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:24px;width:480px;max-width:96vw;}
+.modal h3{font-size:16px;font-weight:700;margin-bottom:20px;}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.form-field{margin-bottom:12px;}
+.form-field label{display:block;font-size:11px;font-weight:600;color:var(--text3);margin-bottom:4px;text-transform:uppercase;}
+.form-field input,.form-field select{width:100%;padding:9px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:'Sora',sans-serif;font-size:13px;outline:none;}
+.modal-footer{display:flex;gap:10px;justify-content:flex-end;margin-top:20px;}
+.toast-container{position:fixed;top:20px;right:20px;z-index:999;display:flex;flex-direction:column;gap:8px;}
+.toast{padding:10px 16px;border-radius:8px;font-size:13px;font-weight:600;border:1px solid;animation:slideIn 0.3s ease;}
+@keyframes slideIn{from{transform:translateX(100%);opacity:0;}to{transform:translateX(0);opacity:1;}}
+.toast.success{background:rgba(16,185,129,0.95);border-color:var(--green);color:#fff;}
+.toast.error{background:rgba(239,68,68,0.95);border-color:var(--red);color:#fff;}
+.toast.info{background:rgba(17,24,39,0.97);border-color:var(--border);color:var(--text);}
+.mono{font-family:'JetBrains Mono',monospace;}
+</style>
+</head>
+<body>
+
+<div class="toast-container" id="toastContainer"></div>
+
+<!-- Login -->
+<div class="login-screen" id="loginScreen">
+  <div class="login-box">
+    <h1>🏫 SchoolManagement GH</h1>
+    <p>Super Admin — Platform Management</p>
+    <div class="field">
+      <label>Username</label>
+      <input type="text" id="saUser" value="SUPERADMIN" autocomplete="off">
+    </div>
+    <div class="field">
+      <label>Password</label>
+      <input type="password" id="saPass" onkeydown="if(event.key==='Enter')doSALogin()">
+    </div>
+    <button class="btn btn-primary" onclick="doSALogin()" id="loginBtn">▶ Login</button>
+    <div class="error" id="loginError"></div>
+  </div>
+</div>
+
+<!-- App -->
+<div id="app" style="display:none;flex-direction:column;">
+  <div class="header">
+    <h1>🏫 SchoolManagement GH</h1>
+    <span class="header-badge">Super Admin</span>
+    <div class="header-spacer"></div>
+    <button class="logout-btn" onclick="doLogout()">Logout</button>
+  </div>
+  <div class="main">
+    <div class="stats-grid" id="statsGrid"></div>
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">🏫 All Schools</div>
+        <button class="btn btn-primary btn-sm" onclick="openAddSchool()">+ Add School</button>
+      </div>
+      <div style="overflow-x:auto;">
+        <table>
+          <thead>
+            <tr>
+              <th>School</th><th>Slug</th><th>Plan</th><th>Expiry</th><th>Status</th><th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="schoolsTable"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Add School Modal -->
+<div class="modal-overlay" id="addSchoolModal">
+  <div class="modal">
+    <h3>➕ Add New School</h3>
+    <div class="form-grid">
+      <div class="form-field" style="grid-column:1/-1;">
+        <label>School Name *</label>
+        <input type="text" id="sName" placeholder="NOVELTY MONTESSORI SCHOOL">
+      </div>
+      <div class="form-field">
+        <label>Slug (URL identifier) *</label>
+        <input type="text" id="sSlug" placeholder="novelty" oninput="this.value=this.value.toLowerCase().replace(/[^a-z0-9-]/g,'')">
+      </div>
+      <div class="form-field">
+        <label>Admin Password *</label>
+        <input type="text" id="sPassword" placeholder="SCHOOL2025">
+      </div>
+      <div class="form-field">
+        <label>Phone</label>
+        <input type="text" id="sPhone" placeholder="0244 000 000">
+      </div>
+      <div class="form-field">
+        <label>Email</label>
+        <input type="text" id="sEmail" placeholder="info@school.edu.gh">
+      </div>
+      <div class="form-field">
+        <label>Plan</label>
+        <select id="sPlan">
+          <option value="trial">Trial (30 days free)</option>
+          <option value="starter">Starter</option>
+          <option value="growth">Growth</option>
+          <option value="premium">Premium</option>
+        </select>
+      </div>
+      <div class="form-field">
+        <label>Access Days</label>
+        <input type="number" id="sDays" value="30" min="1">
+      </div>
+      <div class="form-field" style="grid-column:1/-1;">
+        <label>BMS/Mnotify API Key <span style="color:var(--text3);font-size:10px;">(school's own key — optional)</span></label>
+        <input type="text" id="sMnotifyKey" placeholder="e.g. hirC3uvYycCUayPgKFWYYyzB1">
+      </div>
+      <div class="form-field">
+        <label>SMS Sender ID <span style="color:var(--text3);font-size:10px;">(school initials)</span></label>
+        <input type="text" id="sMnotifySender" placeholder="e.g. BKA, NMS, GIA" maxlength="11">
+      </div>
+      <div class="form-field" style="grid-column:1/-1;">
+        <label>BMS/Mnotify API Key <span style="color:#888;font-weight:400;">(school's own account)</span></label>
+        <input type="text" id="sBmsKey" placeholder="e.g. hirC3uvYycCUayPgKFWYYyzB1">
+      </div>
+      <div class="form-field">
+        <label>SMS Sender ID <span style="color:#888;font-weight:400;">(school initials)</span></label>
+        <input type="text" id="sBmsSender" placeholder="e.g. NMS, BKA, GIS" maxlength="11" oninput="this.value=this.value.toUpperCase().replace(/[^A-Z0-9]/g,'')">
+      </div>
+      <div class="form-field" style="display:flex;align-items:flex-end;">
+        <div style="background:rgba(0,212,255,0.08);border:1px solid rgba(0,212,255,0.2);border-radius:8px;padding:10px 12px;font-size:11px;color:#94a3b8;line-height:1.5;">
+          💡 School registers on <strong style="color:#e2e8f0;">app.bms.africa</strong>, gets their API key and requests their initials as Sender ID. Paste both here.
+        </div>
+      </div>
+    </div>
+    <div id="addSchoolError" class="error"></div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('addSchoolModal')">Cancel</button>
+      <button class="btn btn-primary" onclick="addSchool()">Create School</button>
+    </div>
+  </div>
+</div>
+
+<!-- Extend Subscription Modal -->
+<div class="modal-overlay" id="extendModal">
+  <div class="modal">
+    <h3>📅 Extend Subscription</h3>
+    <input type="hidden" id="extendSlug">
+    <div class="form-grid">
+      <div class="form-field">
+        <label>Months to Add</label>
+        <input type="number" id="extendMonths" value="1" min="1">
+      </div>
+      <div class="form-field">
+        <label>Plan</label>
+        <select id="extendPlan">
+          <option value="trial">Trial</option>
+          <option value="starter">Starter</option>
+          <option value="growth">Growth</option>
+          <option value="premium">Premium</option>
+        </select>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('extendModal')">Cancel</button>
+      <button class="btn btn-primary" onclick="extendSubscription()">Extend</button>
+    </div>
+  </div>
+</div>
+
+<!-- Audit Modal -->
+<div class="modal-overlay" id="auditModal">
+  <div class="modal" style="width:700px;max-width:96vw;max-height:90vh;overflow-y:auto;">
+    <h3 id="auditModalTitle">🔍 Audit Log</h3>
+    <div style="display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap;">
+      <input type="text" id="auditSearch" placeholder="Search actions..." oninput="filterAudit()" style="flex:1;padding:8px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:'Sora',sans-serif;font-size:13px;outline:none;">
+      <select id="auditFilter" onchange="filterAudit()" style="padding:8px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:'Sora',sans-serif;font-size:13px;">
+        <option value="">All Actions</option>
+        <option value="LOGIN">Logins</option>
+        <option value="PAYMENT">Payments</option>
+        <option value="STUDENT">Students</option>
+        <option value="SMS">SMS</option>
+        <option value="FRAUD">Fraud Alerts</option>
+      </select>
+    </div>
+    <div id="auditContent" style="font-size:12px;"></div>
+    <div style="display:flex;justify-content:flex-end;margin-top:16px;">
+      <button class="btn btn-secondary" onclick="closeModal('auditModal')">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- MANAGE SCHOOL MODAL -->
+<div class="modal-overlay" id="manageModal">
+  <div class="modal" style="width:680px;max-width:96vw;max-height:92vh;overflow-y:auto;">
+    <h3>Manage School — <span id="manageName" style="color:var(--accent);"></span></h3>
+    <input type="hidden" id="manageSlug">
+
+    <!-- TAB NAVIGATION -->
+    <div style="display:flex;gap:0;margin-bottom:24px;border-bottom:1px solid var(--border);">
+      <button onclick="switchManageTab('payment')" id="tabPayment" style="padding:10px 20px;background:var(--accent);color:var(--bg);border:none;font-family:Sora,sans-serif;font-size:13px;font-weight:700;cursor:pointer;border-radius:6px 6px 0 0;">Payment</button>
+      <button onclick="switchManageTab('extend')" id="tabExtend" style="padding:10px 20px;background:var(--surface2);color:var(--text2);border:none;font-family:Sora,sans-serif;font-size:13px;font-weight:600;cursor:pointer;border-radius:6px 6px 0 0;">Extend Access</button>
+      <button onclick="switchManageTab('docs')" id="tabDocs" style="padding:10px 20px;background:var(--surface2);color:var(--text2);border:none;font-family:Sora,sans-serif;font-size:13px;font-weight:600;cursor:pointer;border-radius:6px 6px 0 0;">Documents</button>
+    </div>
+
+    <!-- PAYMENT TAB -->
+    <div id="panelPayment">
+      <p style="font-size:13px;color:var(--text2);margin-bottom:20px;">Track whether this school has paid their subscription and record the amount received.</p>
+      <div class="form-grid">
+        <div class="form-field">
+          <label>Payment Status</label>
+          <select id="managePayStatus">
+            <option value="unpaid">Unpaid</option>
+            <option value="paid">Paid</option>
+            <option value="partial">Partial Payment</option>
+            <option value="overdue">Overdue</option>
+          </select>
+        </div>
+        <div class="form-field">
+          <label>Amount Received (GHS)</label>
+          <input type="number" id="managePayAmount" placeholder="e.g. 500">
+        </div>
+        <div class="form-field">
+          <label>Date Received</label>
+          <input type="date" id="managePayDate">
+        </div>
+        <div class="form-field" style="grid-column:1/-1;">
+          <label>Notes</label>
+          <input type="text" id="managePayNotes" placeholder="e.g. Paid via MoMo, ref 12345...">
+        </div>
+      </div>
+      <div style="display:flex;gap:10px;margin-top:8px;">
+        <button class="btn btn-success" onclick="saveManagePayment()">Save Payment Record</button>
+        <button class="btn btn-secondary" onclick="closeModal('manageModal')">Close</button>
+      </div>
+    </div>
+
+    <!-- EXTEND TAB -->
+    <div id="panelExtend" style="display:none;">
+      <input type="hidden" id="manageExtendSlug">
+      <p style="font-size:13px;color:var(--text2);margin-bottom:20px;">Extend this school's access period after they have paid.</p>
+      <div class="form-grid">
+        <div class="form-field">
+          <label>Extend By (Months)</label>
+          <input type="number" id="manageExtendMonths" value="1" min="1" max="24">
+        </div>
+        <div class="form-field">
+          <label>Plan</label>
+          <select id="manageExtendPlan">
+            <option value="trial">Trial</option>
+            <option value="starter">Starter</option>
+            <option value="growth">Growth</option>
+            <option value="premium">Premium</option>
+          </select>
+        </div>
+      </div>
+      <div style="display:flex;gap:10px;margin-top:8px;">
+        <button class="btn btn-success" onclick="saveManageExtend()">Extend Access</button>
+        <button class="btn btn-secondary" onclick="closeModal('manageModal')">Close</button>
+      </div>
+    </div>
+
+    <!-- DOCUMENTS TAB -->
+    <div id="panelDocs" style="display:none;">
+      <p style="font-size:13px;color:var(--text2);margin-bottom:16px;">Schools can send you their terminal report templates, forms, or other documents here. You can download, fill, and return them. Attach a stamp or signature image if required.</p>
+
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:20px;margin-bottom:20px;">
+        <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:14px;">Upload Document</div>
+        <div class="form-grid">
+          <div class="form-field" style="grid-column:1/-1;">
+            <label>Document File (PDF, Word, Excel — max 10MB)</label>
+            <input type="file" id="docFileInput" accept=".pdf,.doc,.docx,.xls,.xlsx" style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:8px 12px;color:var(--text);width:100%;font-family:Sora,sans-serif;font-size:13px;">
+          </div>
+          <div class="form-field" style="grid-column:1/-1;">
+            <label>School Stamp or Head's Signature (Image — optional)</label>
+            <input type="file" id="stampFileInput" accept="image/*" style="background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:8px 12px;color:var(--text);width:100%;font-family:Sora,sans-serif;font-size:13px;">
+          </div>
+        </div>
+        <button class="btn btn-success" onclick="handleDocUpload()" style="margin-top:8px;">Upload Document</button>
+      </div>
+
+      <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:10px;">Uploaded Documents</div>
+      <div id="manageDocList"></div>
+
+      <div style="margin-top:20px;">
+        <button class="btn btn-secondary" onclick="closeModal('manageModal')">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+function switchManageTab(tab) {
+  ['payment','extend','docs'].forEach(function(t) {
+    document.getElementById('panel'+t.charAt(0).toUpperCase()+t.slice(1)).style.display = t===tab ? 'block' : 'none';
+    var btn = document.getElementById('tab'+t.charAt(0).toUpperCase()+t.slice(1));
+    btn.style.background = t===tab ? 'var(--accent)' : 'var(--surface2)';
+    btn.style.color = t===tab ? 'var(--bg)' : 'var(--text2)';
+  });
+}
+</script>
+
+<script>
+const API_BASE = 'https://schoolmanagement-gh-production.up.railway.app/api';
+let SA_TOKEN = localStorage.getItem('sa_token') || '';
+
+// ── Wake backend before every call ──────────────────────────
+async function wakeBackend() {
+  for (let i = 0; i < 3; i++) {
+    try {
+      const r = await fetch(API_BASE + '/health', { method: 'GET' });
+      if (r.ok) return true;
+    } catch(e) {}
+    if (i < 2) await new Promise(r => setTimeout(r, 3000));
+  }
+  return false;
+}
+
+async function saApi(method, path, body) {
+  const res = await fetch(API_BASE + path, {
+    method,
+    headers: { 'Content-Type': 'application/json', ...(SA_TOKEN ? { Authorization: 'Bearer ' + SA_TOKEN } : {}) },
+    ...(body ? { body: JSON.stringify(body) } : {})
+  });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.error || 'API error');
+  return data;
+}
+
+// ── Keep backend alive every 8 minutes ─────────────────────
+setInterval(function() {
+  fetch(API_BASE + '/health').catch(function(){});
+}, 8 * 60 * 1000);
+
+function toast(msg, type='info') {
+  const el = document.createElement('div');
+  el.className = 'toast ' + type;
+  el.textContent = msg;
+  document.getElementById('toastContainer').appendChild(el);
+  setTimeout(() => el.remove(), 3500);
+}
+
+function showStatus(msg, type) {
+  let el = document.getElementById('saStatusBar');
+  if (!el) {
+    el = document.createElement('div');
+    el.id = 'saStatusBar';
+    el.style.cssText = 'position:fixed;bottom:20px;left:50%;transform:translateX(-50%);padding:10px 24px;border-radius:20px;font-size:13px;font-weight:700;z-index:9999;transition:all 0.3s;font-family:Sora,sans-serif;';
+    document.body.appendChild(el);
+  }
+  if (type === 'syncing') {
+    el.style.background='rgba(0,212,255,0.15)';el.style.color='var(--accent)';el.style.border='1px solid rgba(0,212,255,0.3)';
+    el.textContent = msg; el.style.display = 'block';
+  } else if (type === 'ok') {
+    el.style.background='rgba(16,185,129,0.15)';el.style.color='var(--green)';el.style.border='1px solid rgba(16,185,129,0.3)';
+    el.textContent = msg; setTimeout(()=>el.style.display='none', 2000);
+  } else {
+    el.style.background='rgba(239,68,68,0.15)';el.style.color='var(--red)';el.style.border='1px solid rgba(239,68,68,0.3)';
+    el.textContent = msg; el.style.display = 'block';
+    el.style.cursor = 'pointer';
+    el.onclick = function(){ el.onclick=null; el.style.cursor='default'; loadDashboard(); };
+    setTimeout(()=>{ el.style.display='none'; el.onclick=null; }, 8000);
+  }
+}
+
+async function doSALogin() {
+  const u = document.getElementById('saUser').value.trim();
+  const p = document.getElementById('saPass').value;
+  const btn = document.getElementById('loginBtn');
+  const err = document.getElementById('loginError');
+  btn.textContent = 'Connecting...'; btn.disabled = true;
+  // Wake backend first
+  const awake = await wakeBackend();
+  if (!awake) {
+    err.textContent = 'Server is starting up. Please wait a moment and try again.';
+    err.style.display = 'block';
+    btn.textContent = '▶ Login'; btn.disabled = false;
+    return;
+  }
+  btn.textContent = 'Signing in...';
+  try {
+    const data = await saApi('POST', '/super/login', { username: u, password: p });
+    SA_TOKEN = data.token;
+    localStorage.setItem('sa_token', SA_TOKEN);
+    document.getElementById('loginScreen').style.display = 'none';
+    document.getElementById('app').style.display = 'flex';
+    loadDashboard();
+  } catch(e) {
+    err.textContent = e.message; err.style.display = 'block';
+    setTimeout(() => err.style.display = 'none', 4000);
+  } finally { btn.textContent = '▶ Login'; btn.disabled = false; }
+}
+
+function doLogout() {
+  SA_TOKEN = ''; localStorage.removeItem('sa_token');
+  document.getElementById('app').style.display = 'none';
+  document.getElementById('loginScreen').style.display = 'flex';
+}
+
+async function loadDashboard() {
+  showStatus('⟳ Syncing dashboard...', 'syncing');
+  try {
+    const [stats, schools] = await Promise.all([saApi('GET', '/super/stats'), saApi('GET', '/super/schools')]);
+    renderStats(stats);
+    renderSchools(schools);
+    showStatus('✅ Dashboard synced', 'ok');
+  } catch(e) {
+    // Try waking backend then retry once
+    showStatus('⟳ Starting server, please wait...', 'syncing');
+    const awake = await wakeBackend();
+    if (awake) {
+      try {
+        const [stats, schools] = await Promise.all([saApi('GET', '/super/stats'), saApi('GET', '/super/schools')]);
+        renderStats(stats);
+        renderSchools(schools);
+        showStatus('✅ Dashboard synced', 'ok');
+        return;
+      } catch(e2) {}
+    }
+    showStatus('⚠ Failed to sync — tap to retry', 'error');
+    toast('Connection failed: ' + e.message, 'error');
+  }
+}
+
+function renderStats(s) {
+  document.getElementById('statsGrid').innerHTML = `
+    <div class="stat-card"><div class="stat-label">Total Schools</div><div class="stat-value cyan">${s.totalSchools}</div></div>
+    <div class="stat-card"><div class="stat-label">Active Schools</div><div class="stat-value green">${s.activeSchools}</div></div>
+    <div class="stat-card"><div class="stat-label">Expired</div><div class="stat-value red">${s.expiredSchools}</div></div>
+    <div class="stat-card"><div class="stat-label">Total Revenue</div><div class="stat-value gold">GHS ${(s.totalRevenue||0).toFixed(2)}</div></div>
+  `;
+}
+
+// Load payment records from localStorage
+function getPaymentRecords() {
+  try { return JSON.parse(localStorage.getItem('sa_payment_records') || '{}'); } catch(e){ return {}; }
+}
+function savePaymentRecords(records) {
+  localStorage.setItem('sa_payment_records', JSON.stringify(records));
+}
+
+function renderSchools(schools) {
+  const tbody = document.getElementById('schoolsTable');
+  if (!schools.length) { tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:var(--text3);padding:30px;">No schools yet. Add your first school.</td></tr>'; return; }
+  const payRecords = getPaymentRecords();
+  tbody.innerHTML = schools.map(s => {
+    const expiry = new Date(s.planExpiry);
+    const expired = expiry < new Date();
+    const daysLeft = Math.ceil((expiry - new Date()) / (1000*60*60*24));
+    const statusBadge = !s.active ? '<span class="badge badge-inactive">Inactive</span>' : expired ? '<span class="badge badge-expired">Expired</span>' : '<span class="badge badge-active">Active</span>';
+    const planBadge = s.plan === 'premium' ? '<span class="badge badge-premium">Premium</span>' : s.plan === 'trial' ? '<span class="badge badge-trial">Trial</span>' : '<span class="badge badge-active">'+s.plan+'</span>';
+    const pr = payRecords[s.slug] || { status:'unpaid', amount:'', date:'' };
+    const payBadge = pr.status === 'paid'
+      ? `<span class="badge badge-active" style="font-size:10px;">Paid ${pr.amount ? 'GHS '+pr.amount : ''}</span>`
+      : `<span class="badge badge-expired" style="font-size:10px;">Unpaid</span>`;
+    return `<tr>
+      <td>
+        <strong>${s.name}</strong>
+        <div style="font-size:11px;color:var(--text3);">${s.email||''} ${s.phone ? '· '+s.phone : ''}</div>
+        <div style="margin-top:4px;">${payBadge}</div>
+      </td>
+      <td class="mono" style="color:var(--accent);font-size:12px;">${s.slug}</td>
+      <td>${planBadge}</td>
+      <td style="font-size:12px;">${expiry.toLocaleDateString()}<div style="font-size:10px;color:${daysLeft<7?'var(--red)':'var(--text3)'};">${expired?'EXPIRED':daysLeft+' days left'}</div></td>
+      <td>${statusBadge}</td>
+      <td>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;">
+          <button class="btn btn-sm btn-success" onclick="openManageSchool('${s.slug}','${s.name}','${s.plan}')">Manage</button>
+          <button class="btn btn-sm btn-secondary" onclick="copyLoginURL('${s.slug}')">URL</button>
+          <button class="btn btn-sm btn-secondary" onclick="viewSchoolAudit('${s.slug}','${s.name}')">Audit</button>
+          <button class="btn btn-sm btn-danger" onclick="deleteSchool('${s.slug}','${s.name}')">Delete</button>
+        </div>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+// ── MANAGE SCHOOL MODAL FUNCTIONS ────────────────────────────────
+function openManageSchool(slug, name, plan) {
+  document.getElementById('manageSlug').value = slug;
+  document.getElementById('manageName').textContent = name;
+  document.getElementById('manageExtendSlug').value = slug;
+  document.getElementById('manageExtendPlan').value = plan;
+  // Load payment record
+  const pr = getPaymentRecords()[slug] || { status:'unpaid', amount:'', date:'', notes:'' };
+  document.getElementById('managePayStatus').value = pr.status || 'unpaid';
+  document.getElementById('managePayAmount').value = pr.amount || '';
+  document.getElementById('managePayDate').value = pr.date || '';
+  document.getElementById('managePayNotes').value = pr.notes || '';
+  // Clear doc list
+  document.getElementById('manageDocList').innerHTML = '<div style="color:var(--text3);font-size:12px;">Loading documents...</div>';
+  document.getElementById('manageModal').classList.add('show');
+  loadSchoolDocs(slug);
+}
+
+function saveManagePayment() {
+  const slug = document.getElementById('manageSlug').value;
+  const status = document.getElementById('managePayStatus').value;
+  const amount = document.getElementById('managePayAmount').value.trim();
+  const date = document.getElementById('managePayDate').value;
+  const notes = document.getElementById('managePayNotes').value.trim();
+  const records = getPaymentRecords();
+  records[slug] = { status, amount, date, notes, updatedAt: new Date().toISOString() };
+  savePaymentRecords(records);
+  toast('Payment record saved for ' + slug, 'success');
+  loadDashboard();
+}
+
+async function saveManageExtend() {
+  const slug = document.getElementById('manageExtendSlug').value;
+  const months = parseInt(document.getElementById('manageExtendMonths').value) || 1;
+  const plan = document.getElementById('manageExtendPlan').value;
+  try {
+    await saApi('POST', '/super/schools/' + slug + '/extend', { months, plan });
+    toast('Extended by ' + months + ' month(s)', 'success');
+    loadDashboard();
+  } catch(e) { toast('Error: ' + e.message, 'error'); }
+}
+
+// ── DOCUMENT MANAGEMENT ───────────────────────────────────────────
+const schoolDocs = {}; // in-memory doc store keyed by slug
+
+function loadSchoolDocs(slug) {
+  const docs = JSON.parse(localStorage.getItem('sa_docs_' + slug) || '[]');
+  renderDocList(slug, docs);
+}
+
+function renderDocList(slug, docs) {
+  const el = document.getElementById('manageDocList');
+  if (!docs.length) { el.innerHTML = '<div style="color:var(--text3);font-size:12px;padding:8px 0;">No documents uploaded yet.</div>'; return; }
+  el.innerHTML = docs.map((d, i) => `
+    <div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border);">
+      <div style="flex:1;">
+        <div style="font-size:13px;font-weight:600;color:var(--text);">${d.name}</div>
+        <div style="font-size:11px;color:var(--text3);">${d.type} · ${d.size} · ${new Date(d.uploadedAt).toLocaleDateString()}</div>
+        ${d.stamp ? '<div style="font-size:11px;color:var(--green);">Stamp/Signature attached</div>' : ''}
+      </div>
+      <div style="display:flex;gap:6px;">
+        <button class="btn btn-sm btn-success" onclick="downloadDoc('${slug}',${i})">Download</button>
+        <button class="btn btn-sm btn-danger" onclick="deleteDoc('${slug}',${i})">Remove</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function handleDocUpload() {
+  const slug = document.getElementById('manageSlug').value;
+  const fileInput = document.getElementById('docFileInput');
+  const stampInput = document.getElementById('stampFileInput');
+  const files = fileInput.files;
+  if (!files.length) { toast('Please select a file first', 'error'); return; }
+  const file = files[0];
+  const maxSize = 10 * 1024 * 1024; // 10MB
+  if (file.size > maxSize) { toast('File too large. Maximum size is 10MB', 'error'); return; }
+  const allowed = ['application/pdf','application/msword','application/vnd.openxmlformats-officedocument.wordprocessingml.document','application/vnd.ms-excel','application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'];
+  if (!allowed.includes(file.type) && !file.name.match(/\.(pdf|doc|docx|xls|xlsx)$/i)) {
+    toast('Only PDF, Word, and Excel files are allowed', 'error'); return;
+  }
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    const stampReader = new FileReader();
+    const processDoc = function(stampData) {
+      const docs = JSON.parse(localStorage.getItem('sa_docs_' + slug) || '[]');
+      const ext = file.name.split('.').pop().toLowerCase();
+      const typeLabel = ext === 'pdf' ? 'PDF' : (ext === 'doc' || ext === 'docx') ? 'Word' : 'Excel';
+      docs.push({
+        name: file.name,
+        type: typeLabel,
+        size: (file.size / 1024).toFixed(1) + ' KB',
+        data: e.target.result,
+        stamp: stampData || null,
+        uploadedAt: new Date().toISOString()
+      });
+      localStorage.setItem('sa_docs_' + slug, JSON.stringify(docs));
+      fileInput.value = '';
+      stampInput.value = '';
+      toast('Document uploaded successfully', 'success');
+      loadSchoolDocs(slug);
+    };
+    if (stampInput.files.length) {
+      stampReader.onload = function(se) { processDoc(se.target.result); };
+      stampReader.readAsDataURL(stampInput.files[0]);
+    } else { processDoc(null); }
+  };
+  reader.readAsDataURL(file);
+}
+
+function downloadDoc(slug, index) {
+  const docs = JSON.parse(localStorage.getItem('sa_docs_' + slug) || '[]');
+  const doc = docs[index];
+  if (!doc) return;
+  const a = document.createElement('a');
+  a.href = doc.data;
+  a.download = doc.name;
+  a.click();
+}
+
+function deleteDoc(slug, index) {
+  if (!confirm('Remove this document?')) return;
+  const docs = JSON.parse(localStorage.getItem('sa_docs_' + slug) || '[]');
+  docs.splice(index, 1);
+  localStorage.setItem('sa_docs_' + slug, JSON.stringify(docs));
+  loadSchoolDocs(slug);
+  toast('Document removed', 'success');
+}
+
+function openAddSchool() { document.getElementById('addSchoolModal').classList.add('show'); }
+function closeModal(id) { document.getElementById(id).classList.remove('show'); }
+
+async function addSchool() {
+  const name = document.getElementById('sName').value.trim();
+  const slug = document.getElementById('sSlug').value.trim();
+  const password = document.getElementById('sPassword').value.trim();
+  const plan = document.getElementById('sPlan').value;
+  const days = parseInt(document.getElementById('sDays').value) || 30;
+  const phone = document.getElementById('sPhone').value.trim();
+  const email = document.getElementById('sEmail').value.trim();
+  const mnotifyKey = document.getElementById('sBmsKey').value.trim();
+  const mnotifySender = document.getElementById('sBmsSender').value.trim();
+  const err = document.getElementById('addSchoolError');
+  if (!name || !slug || !password) { err.textContent = 'Name, slug and password required'; err.style.display = 'block'; return; }
+  try {
+    await saApi('POST', '/super/schools', { name, slug, adminPassword: password, plan, expiryDays: days, phone, email, mnotifyKey, mnotifySender });
+    closeModal('addSchoolModal');
+    toast('School created! Login: ADMIN / ' + password, 'success');
+    loadDashboard();
+    ['sName','sSlug','sPassword','sPhone','sEmail','sBmsKey','sBmsSender'].forEach(id => document.getElementById(id).value = '');
+  } catch(e) { err.textContent = e.message; err.style.display = 'block'; }
+}
+
+function openExtend(slug, plan) {
+  document.getElementById('extendSlug').value = slug;
+  document.getElementById('extendPlan').value = plan;
+  document.getElementById('extendModal').classList.add('show');
+}
+
+async function extendSubscription() {
+  const slug = document.getElementById('extendSlug').value;
+  const months = parseInt(document.getElementById('extendMonths').value) || 1;
+  const plan = document.getElementById('extendPlan').value;
+  try {
+    const res = await saApi('POST', '/super/schools/' + slug + '/extend', { months, plan });
+    closeModal('extendModal');
+    toast(res.message, 'success');
+    loadDashboard();
+  } catch(e) { toast(e.message, 'error'); }
+}
+
+async function toggleSchool(slug, currentActive) {
+  if (!confirm((currentActive ? 'Deactivate' : 'Activate') + ' ' + slug + '?')) return;
+  try {
+    await saApi('PATCH', '/super/schools/' + slug, { active: !currentActive });
+    toast('School ' + (currentActive ? 'deactivated' : 'activated'), 'success');
+    loadDashboard();
+  } catch(e) { toast(e.message, 'error'); }
+}
+
+function copyLoginURL(slug) {
+  const url = 'https://nanakwame7225.github.io/SchoolFees/?school=' + slug;
+  navigator.clipboard.writeText(url).then(() => toast('URL copied: ' + url, 'success'));
+}
+
+let currentAuditData = [];
+
+async function viewSchoolAudit(slug, name) {
+  document.getElementById('auditModalTitle').textContent = '🔍 Audit Log — ' + name;
+  document.getElementById('auditContent').innerHTML = '<div style="text-align:center;padding:30px;color:var(--text3);">Loading...</div>';
+  document.getElementById('auditModal').classList.add('show');
+  document.getElementById('auditSearch').value = '';
+  document.getElementById('auditFilter').value = '';
+  try {
+    const data = await saApi('GET', '/super/schools/' + slug + '/audit');
+    currentAuditData = data;
+    renderAudit(data);
+  } catch(e) {
+    document.getElementById('auditContent').innerHTML = '<div style="color:var(--red);padding:20px;">Failed to load audit log: ' + e.message + '</div>';
+  }
+}
+
+function renderAudit(logs) {
+  const el = document.getElementById('auditContent');
+  if (!logs || !logs.length) { el.innerHTML = '<div style="text-align:center;padding:30px;color:var(--text3);">No audit records found.</div>'; return; }
+  const fraudActions = ['FRAUD','WITHDRAWN_PAYMENT','DUPLICATE','TAMPER','INVALID'];
+  el.innerHTML = '<table style="width:100%;border-collapse:collapse;">'
+    + '<thead><tr style="background:var(--surface2);">'
+    + '<th style="padding:8px 10px;text-align:left;font-size:11px;color:var(--text3);font-weight:600;">Time</th>'
+    + '<th style="padding:8px 10px;text-align:left;font-size:11px;color:var(--text3);font-weight:600;">User</th>'
+    + '<th style="padding:8px 10px;text-align:left;font-size:11px;color:var(--text3);font-weight:600;">Action</th>'
+    + '<th style="padding:8px 10px;text-align:left;font-size:11px;color:var(--text3);font-weight:600;">Detail</th>'
+    + '</tr></thead><tbody>'
+    + logs.map(function(l) {
+        const isFraud = fraudActions.some(function(f){ return (l.action||'').toUpperCase().includes(f); });
+        const rowStyle = isFraud ? 'background:rgba(239,68,68,0.07);' : '';
+        const actionColor = isFraud ? 'color:var(--red);font-weight:700;' : 'color:var(--accent);';
+        const t = new Date(l.time||l.createdAt);
+        const timeStr = t.toLocaleDateString() + ' ' + t.toLocaleTimeString();
+        return '<tr style="border-top:1px solid var(--border);' + rowStyle + '">'
+          + '<td style="padding:8px 10px;font-size:11px;color:var(--text3);white-space:nowrap;">' + timeStr + '</td>'
+          + '<td style="padding:8px 10px;font-size:12px;font-weight:600;">' + (l.user||'—') + '</td>'
+          + '<td style="padding:8px 10px;font-size:11px;' + actionColor + '">' + (l.action||'—') + (isFraud?' ⚠️':'') + '</td>'
+          + '<td style="padding:8px 10px;font-size:12px;color:var(--text2);">' + (l.detail||'—') + '</td>'
+          + '</tr>';
+      }).join('')
+    + '</tbody></table>';
+}
+
+function filterAudit() {
+  const q = document.getElementById('auditSearch').value.toLowerCase();
+  const f = document.getElementById('auditFilter').value.toUpperCase();
+  let filtered = currentAuditData;
+  if (f) filtered = filtered.filter(function(l){ return (l.action||'').toUpperCase().includes(f); });
+  if (q) filtered = filtered.filter(function(l){ return (l.user||'').toLowerCase().includes(q) || (l.action||'').toLowerCase().includes(q) || (l.detail||'').toLowerCase().includes(q); });
+  renderAudit(filtered);
+}
+
+async function deleteSchool(slug, name) {
+  if (!confirm('DELETE ' + name + '?\n\nThis will permanently remove the school and ALL its data — students, payments, staff, settings.\n\nThis CANNOT be undone. Type the school name to confirm.')) return;
+  const typed = prompt('Type the school name exactly to confirm deletion:\n' + name);
+  if (!typed || typed.trim() !== name.trim()) { toast('Deletion cancelled — name did not match', 'error'); return; }
+  try {
+    await saApi('DELETE', '/super/schools/' + slug);
+    toast('School ' + name + ' deleted permanently', 'success');
+    loadDashboard();
+  } catch(e) { toast('Delete failed: ' + e.message, 'error'); }
+}
+
+// Auto-login if token exists — wake backend first
+window.addEventListener('DOMContentLoaded', function() {
+  if (SA_TOKEN) {
+    document.getElementById('loginScreen').style.display = 'none';
+    document.getElementById('app').style.display = 'flex';
+    showStatus('⟳ Connecting to server...', 'syncing');
+    wakeBackend().then(function() {
+      loadDashboard();
+    });
+  }
+});
+</script>
+</body>
+</html>
