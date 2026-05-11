@@ -6,6 +6,9 @@
 <title>SchoolManagement GH — Admin</title>
 <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
+.form-grid { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+.form-field label { display:block; font-size:11px; font-weight:700; color:var(--text3); text-transform:uppercase; letter-spacing:.8px; margin-bottom:6px; }
+.form-field input, .form-field select { width:100%; padding:10px 14px; background:var(--surface2); border:1px solid var(--border); border-radius:8px; color:var(--text); font-family:'Sora',sans-serif; font-size:13px; outline:none; }
 :root {
   --bg:#0a0e1a; --surface:#111827; --surface2:#1a2235; --border:#2a3a52;
   --accent:#00d4ff; --green:#10b981; --red:#ef4444; --gold:#f59e0b; --purple:#7c3aed;
@@ -376,11 +379,15 @@ td{padding:10px 14px;border-bottom:1px solid var(--border);}
 
 <script>
 function switchManageTab(tab) {
-  ['payment','extend','docs'].forEach(function(t) {
-    document.getElementById('panel'+t.charAt(0).toUpperCase()+t.slice(1)).style.display = t===tab ? 'block' : 'none';
+  ['payment','extend','docs','credentials'].forEach(function(t) {
+    var panel = document.getElementById('panel'+t.charAt(0).toUpperCase()+t.slice(1));
+    if(panel) panel.style.display = t===tab ? 'block' : 'none';
     var btn = document.getElementById('tab'+t.charAt(0).toUpperCase()+t.slice(1));
-    btn.style.background = t===tab ? 'var(--accent)' : 'var(--surface2)';
-    btn.style.color = t===tab ? 'var(--bg)' : 'var(--text2)';
+    if(btn){
+      btn.style.background = t===tab ? 'var(--accent)' : 'var(--surface2)';
+      btn.style.color = t===tab ? 'var(--bg)' : 'var(--text2)';
+      btn.style.fontWeight = t===tab ? '700' : '600';
+    }
   });
 }
 </script>
