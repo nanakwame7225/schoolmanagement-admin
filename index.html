@@ -254,6 +254,7 @@ td{padding:10px 14px;border-bottom:1px solid var(--border);}
       <button onclick="switchManageTab('payment')" id="tabPayment" style="padding:10px 20px;background:var(--accent);color:var(--bg);border:none;font-family:Sora,sans-serif;font-size:13px;font-weight:700;cursor:pointer;border-radius:6px 6px 0 0;">Payment</button>
       <button onclick="switchManageTab('extend')" id="tabExtend" style="padding:10px 20px;background:var(--surface2);color:var(--text2);border:none;font-family:Sora,sans-serif;font-size:13px;font-weight:600;cursor:pointer;border-radius:6px 6px 0 0;">Extend Access</button>
       <button onclick="switchManageTab('docs')" id="tabDocs" style="padding:10px 20px;background:var(--surface2);color:var(--text2);border:none;font-family:Sora,sans-serif;font-size:13px;font-weight:600;cursor:pointer;border-radius:6px 6px 0 0;">Documents</button>
+      <button onclick="switchManageTab('credentials')" id="tabCredentials" style="padding:10px 20px;background:var(--surface2);color:var(--text2);border:none;font-family:Sora,sans-serif;font-size:13px;font-weight:600;cursor:pointer;border-radius:6px 6px 0 0;">Reset Login</button>
     </div>
 
     <!-- PAYMENT TAB -->
@@ -336,6 +337,37 @@ td{padding:10px 14px;border-bottom:1px solid var(--border);}
       <div id="manageDocList"></div>
 
       <div style="margin-top:20px;">
+        <button class="btn btn-secondary" onclick="closeModal('manageModal')">Close</button>
+      </div>
+    </div>
+
+    <!-- RESET LOGIN TAB -->
+    <div id="panelCredentials" style="display:none;">
+      <p style="font-size:13px;color:var(--text2);margin-bottom:20px;">Reset the username and password for this school's admin login. Use this if the school is locked out.</p>
+      <div class="form-grid">
+        <div class="form-field">
+          <label>Username</label>
+          <input type="text" id="resetUsername" value="ADMIN" style="text-transform:uppercase;">
+        </div>
+        <div class="form-field">
+          <label>New Password</label>
+          <input type="text" id="resetPassword" placeholder="e.g. SCHOOL2025">
+        </div>
+        <div class="form-field">
+          <label>Display Name</label>
+          <input type="text" id="resetDisplayName" placeholder="e.g. Admin">
+        </div>
+        <div class="form-field">
+          <label>Role</label>
+          <select id="resetRole">
+            <option value="master">Master Admin</option>
+            <option value="admin">Admin</option>
+          </select>
+        </div>
+      </div>
+      <div id="resetCredMsg" style="display:none;padding:10px 14px;border-radius:8px;font-size:13px;margin-top:8px;"></div>
+      <div style="display:flex;gap:10px;margin-top:16px;">
+        <button class="btn btn-danger" onclick="resetSchoolCredentials()">Reset Login Credentials</button>
         <button class="btn btn-secondary" onclick="closeModal('manageModal')">Close</button>
       </div>
     </div>
