@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Register Your School — SchoolManagement GH</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Sora',sans-serif;background:linear-gradient(135deg,#0a1628,#0d1f3c);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;}
+.card{background:#0d1f3c;border:1px solid #1e3a5f;border-radius:20px;padding:40px 36px;width:100%;max-width:520px;box-shadow:0 24px 64px rgba(0,0,0,0.4);}
+.logo{text-align:center;margin-bottom:28px;}
+.logo-icon{width:60px;height:60px;background:rgba(0,212,255,0.1);border:1.5px solid rgba(0,212,255,0.3);border-radius:14px;display:flex;align-items:center;justify-content:center;margin:0 auto 12px;}
+.logo-icon svg{width:28px;height:28px;stroke:#00d4ff;stroke-width:1.8;fill:none;}
+.brand{font-size:18px;font-weight:800;color:#fff;}
+.brand span{color:#00d4ff;}
+.tagline{font-size:12px;color:rgba(255,255,255,0.45);margin-top:4px;}
+h2{font-size:20px;font-weight:800;color:#fff;margin-bottom:6px;text-align:center;}
+.subtitle{font-size:13px;color:rgba(255,255,255,0.5);text-align:center;margin-bottom:28px;}
+.field{margin-bottom:16px;}
+.field label{display:block;font-size:10px;font-weight:700;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:.8px;margin-bottom:6px;}
+.field input,.field select{width:100%;padding:12px 14px;background:rgba(255,255,255,0.05);border:1.5px solid rgba(255,255,255,0.1);border-radius:10px;color:#fff;font-family:'Sora',sans-serif;font-size:13px;outline:none;transition:all .2s;}
+.field input:focus,.field select:focus{border-color:#00d4ff;background:rgba(0,212,255,0.05);}
+.field input::placeholder{color:rgba(255,255,255,0.25);}
+.field select option{background:#0d1f3c;color:#fff;}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+@media(max-width:480px){.grid{grid-template-columns:1fr;}}
+.btn{width:100%;padding:14px;background:linear-gradient(135deg,#00a8cc,#00d4ff);border:none;border-radius:10px;color:#000;font-family:'Sora',sans-serif;font-size:14px;font-weight:800;cursor:pointer;margin-top:8px;transition:all .2s;letter-spacing:.3px;}
+.btn:hover{transform:translateY(-1px);box-shadow:0 8px 24px rgba(0,180,220,0.3);}
+.btn:disabled{opacity:.6;cursor:not-allowed;transform:none;}
+.error{background:rgba(220,38,38,0.1);border:1px solid rgba(220,38,38,0.3);border-radius:8px;padding:10px 14px;color:#f87171;font-size:13px;margin-top:12px;display:none;}
+.success-screen{display:none;text-align:center;padding:20px 0;}
+.success-icon{width:72px;height:72px;background:rgba(5,150,105,0.15);border:2px solid rgba(5,150,105,0.4);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 20px;font-size:32px;}
+.success-screen h3{font-size:20px;font-weight:800;color:#fff;margin-bottom:10px;}
+.success-screen p{font-size:13px;color:rgba(255,255,255,0.5);line-height:1.7;}
+.divider{height:1px;background:rgba(255,255,255,0.07);margin:20px 0;}
+.features{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:24px;}
+.feature{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:10px;padding:12px 14px;}
+.feature-title{font-size:12px;font-weight:700;color:#e2e8f0;margin-bottom:3px;}
+.feature-sub{font-size:11px;color:rgba(255,255,255,0.35);}
+.pricing{background:rgba(0,212,255,0.05);border:1px solid rgba(0,212,255,0.15);border-radius:10px;padding:14px;margin-bottom:20px;text-align:center;}
+.pricing-label{font-size:11px;color:rgba(255,255,255,0.4);margin-bottom:4px;}
+.pricing-value{font-size:22px;font-weight:800;color:#00d4ff;}
+.pricing-sub{font-size:11px;color:rgba(255,255,255,0.35);margin-top:3px;}
+</style>
+</head>
+<body>
+
+<div class="card">
+  <div class="logo">
+    <div class="logo-icon">
+      <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+    </div>
+    <div class="brand">School<span>Management</span> GH</div>
+    <div class="tagline">Ghana's School Administration Platform</div>
+  </div>
+
+  <!-- Registration Form -->
+  <div id="regForm">
+    <h2>Register Your School</h2>
+    <p class="subtitle">Start your free 30-day trial. No payment required.</p>
+
+    <div class="pricing">
+      <div class="pricing-label">After trial</div>
+      <div class="pricing-value">From GHS 400<span style="font-size:14px;font-weight:400;color:rgba(255,255,255,0.4);">/month</span></div>
+      <div class="pricing-sub">Starter · Growth · Premium plans available</div>
+    </div>
+
+    <div class="features">
+      <div class="feature"><div class="feature-title">Student Management</div><div class="feature-sub">Register, track fees & payments</div></div>
+      <div class="feature"><div class="feature-title">SMS Notifications</div><div class="feature-sub">Auto receipts & reminders</div></div>
+      <div class="feature"><div class="feature-title">Reports & Analytics</div><div class="feature-sub">PDF, Excel exports</div></div>
+      <div class="feature"><div class="feature-title">Staff & Payslips</div><div class="feature-sub">Salaries, SSNIT, attendance</div></div>
+      <div class="feature"><div class="feature-title">Academics & Grades</div><div class="feature-sub">Results, rankings, reports</div></div>
+      <div class="feature"><div class="feature-title">Works on Any Device</div><div class="feature-sub">Phone, tablet, desktop</div></div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="field">
+      <label>School Name *</label>
+      <input type="text" id="regSchoolName" placeholder="e.g. NOVELTY MONTESSORI SCHOOL" oninput="updateRegPreview()">
+    </div>
+    <div class="grid">
+      <div class="field">
+        <label>Your Name *</label>
+        <input type="text" id="regContactName" placeholder="e.g. Kofi Mensah">
+      </div>
+      <div class="field">
+        <label>Phone Number *</label>
+        <input type="tel" id="regPhone" placeholder="e.g. 0244 123 456">
+      </div>
+    </div>
+    <div class="grid">
+      <div class="field">
+        <label>Email (optional)</label>
+        <input type="email" id="regEmail" placeholder="info@school.edu.gh">
+      </div>
+      <div class="field">
+        <label>Your Role</label>
+        <select id="regRole">
+          <option value="Proprietor">Proprietor</option>
+          <option value="Proprietress">Proprietress</option>
+          <option value="Headmaster">Headmaster</option>
+          <option value="Headmistress">Headmistress</option>
+          <option value="Administrator">Administrator</option>
+          <option value="Accountant">Accountant</option>
+          <option value="Other">Other</option>
+        </select>
+      </div>
+    </div>
+    <div class="field">
+      <label>School Location / District</label>
+      <input type="text" id="regLocation" placeholder="e.g. Ablekuma, Accra">
+    </div>
+    <div class="field">
+      <label>Number of Students (approx.)</label>
+      <select id="regStudentCount">
+        <option value="1-50">1 – 50 students</option>
+        <option value="51-150">51 – 150 students</option>
+        <option value="151-300">151 – 300 students</option>
+        <option value="301-500">301 – 500 students</option>
+        <option value="500+">500+ students</option>
+      </select>
+    </div>
+
+    <div id="regPreview" style="background:rgba(0,212,255,0.05);border:1px solid rgba(0,212,255,0.15);border-radius:8px;padding:10px 14px;font-size:12px;color:rgba(255,255,255,0.5);margin-bottom:4px;display:none;">
+      Your login URL will be: <strong id="regPreviewUrl" style="color:#00d4ff;"></strong>
+    </div>
+
+    <div class="error" id="regError"></div>
+    <button class="btn" onclick="submitRegistration()" id="regBtn">Start Free Trial</button>
+
+    <p style="font-size:11px;color:rgba(255,255,255,0.25);text-align:center;margin-top:14px;">By registering you agree to our terms of service. We will contact you within 24 hours to set up your account. For immediate help call <strong style="color:#00d4ff;">0538 350 574</strong>.</p>
+  </div>
+
+  <!-- Success Screen -->
+  <div class="success-screen" id="successScreen">
+    <div class="success-icon">✓</div>
+    <h3>Registration Received!</h3>
+    <p>Thank you for registering <strong id="successSchoolName" style="color:#fff;"></strong>.<br><br>
+    Our team will contact <strong id="successContact" style="color:#fff;"></strong> within <strong style="color:#00d4ff;">24 hours</strong> to set up your account and get you started.<br><br>
+    For immediate assistance call <strong style="color:#00d4ff;">0538 350 574</strong> or WhatsApp us.</p>
+    <div style="margin-top:24px;padding:14px;background:rgba(0,212,255,0.05);border:1px solid rgba(0,212,255,0.15);border-radius:10px;">
+      <div style="font-size:11px;color:rgba(255,255,255,0.4);margin-bottom:4px;">What happens next</div>
+      <div style="font-size:13px;color:rgba(255,255,255,0.7);line-height:1.8;">
+        1. We review your registration<br>
+        2. We call you to confirm details<br>
+        3. We send your login URL and password<br>
+        4. You start your 30-day free trial
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const API = 'https://schoolmanagement-gh-production.up.railway.app/api';
+
+function updateRegPreview(){
+  var name = document.getElementById('regSchoolName').value;
+  var slug = name.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'').slice(0,20);
+  var prev = document.getElementById('regPreview');
+  var url = document.getElementById('regPreviewUrl');
+  if(slug && slug.length > 2){
+    prev.style.display='block';
+    url.textContent = 'schoolfees.app/?school='+slug;
+  } else {
+    prev.style.display='none';
+  }
+}
+
+async function submitRegistration(){
+  var schoolName = document.getElementById('regSchoolName').value.trim();
+  var contactName = document.getElementById('regContactName').value.trim();
+  var phone = document.getElementById('regPhone').value.trim();
+  var email = document.getElementById('regEmail').value.trim();
+  var role = document.getElementById('regRole').value;
+  var location = document.getElementById('regLocation').value.trim();
+  var studentCount = document.getElementById('regStudentCount').value;
+  var errEl = document.getElementById('regError');
+  var btn = document.getElementById('regBtn');
+
+  if(!schoolName){ errEl.textContent='Please enter your school name'; errEl.style.display='block'; return; }
+  if(!contactName){ errEl.textContent='Please enter your name'; errEl.style.display='block'; return; }
+  if(!phone){ errEl.textContent='Please enter your phone number'; errEl.style.display='block'; return; }
+
+  errEl.style.display='none';
+  btn.textContent='Submitting...'; btn.disabled=true;
+
+  try {
+    var res = await fetch(API+'/super/register', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ schoolName, contactName, phone, email, role, location, studentCount, plan:'trial' })
+    });
+    var data = await res.json();
+    if(!res.ok) throw new Error(data.error||'Submission failed');
+    // Show success
+    document.getElementById('regForm').style.display='none';
+    document.getElementById('successScreen').style.display='block';
+    document.getElementById('successSchoolName').textContent=schoolName;
+    document.getElementById('successContact').textContent=contactName+' ('+phone+')';
+  } catch(e){
+    errEl.textContent=e.message||'Something went wrong. Please call 0538 350 574.';
+    errEl.style.display='block';
+    btn.textContent='Start Free Trial'; btn.disabled=false;
+  }
+}
+</script>
+
+</body>
+</html>
