@@ -427,60 +427,7 @@ td{padding:10px 14px;border-bottom:1px solid var(--border);}
 </div>
 
 <script>
-function switchManageTab(tab) {
-  ['payment','extend','sublog','suspend','docs','credentials'].forEach(function(t) {
-    var panelId = 'panel' + t.charAt(0).toUpperCase() + t.slice(1);
-    var panel = document.getElementById(panelId);
-    if(panel) panel.style.display = t===tab ? 'block' : 'none';
-    var btn = document.getElementById('tab' + t.charAt(0).toUpperCase() + t.slice(1));
-    if(btn){
-      btn.style.background = t===tab ? 'var(--accent)' : 'var(--surface2)';
-      btn.style.color = t===tab ? 'var(--bg)' : 'var(--text2)';
-      btn.style.fontWeight = t===tab ? '700' : '600';
-    }
-  });
-  // Load sub log dynamically
-  if(tab==='sublog') loadSubLog();
-  // Load suspend panel state
-  if(tab==='suspend') loadSuspendPanel();
-}
 
-async async function resetSchoolCredentials(){
-  var slug = document.getElementById('manageSlug').value;
-  var username = (document.getElementById('resetUsername').value||'').trim().toUpperCase();
-  var password = (document.getElementById('resetPassword').value||'').trim();
-  var displayName = (document.getElementById('resetDisplayName').value||'').trim() || 'Admin';
-  var role = (document.getElementById('resetRole').value)||'master';
-  var msgEl = document.getElementById('resetCredMsg');
-  if(!username||!password){
-    msgEl.textContent='Please enter both username and password.';
-    msgEl.style.display='block';msgEl.style.background='rgba(220,38,38,0.1)';msgEl.style.color='#dc2626';return;
-  }
-  if(password.length < 4){
-    msgEl.textContent='Password must be at least 4 characters.';
-    msgEl.style.display='block';msgEl.style.background='rgba(220,38,38,0.1)';msgEl.style.color='#dc2626';return;
-  }
-  if(!confirm('Reset login for '+slug+' to:\nUsername: '+username+'\nPassword: '+password+'?')) return;
-  try {
-    msgEl.textContent='Resetting...';msgEl.style.display='block';
-    msgEl.style.background='rgba(0,212,255,0.1)';msgEl.style.color='var(--accent)';
-    const r = await saApi('POST', '/super/schools/'+slug+'/reset-user', {username, password, displayName, role});
-    if(r.success){
-      msgEl.textContent='Reset successful! Login: '+username+' / '+password;
-      msgEl.style.background='rgba(5,150,105,0.1)';msgEl.style.color='#059669';
-      toast('Login credentials reset for '+slug,'success');
-    } else {
-      throw new Error(r.error||'Reset failed');
-    }
-  } catch(e){
-    msgEl.textContent='Error: '+e.message;
-    msgEl.style.background='rgba(220,38,38,0.1)';msgEl.style.color='#dc2626';
-    toast('Reset failed: '+e.message,'error');
-  }
-}
-</script>
-
-<script>
 const API_BASE = 'https://schoolmanagement-gh-production.up.railway.app/api';
 let SA_TOKEN = localStorage.getItem('sa_token') || '';
 
@@ -1049,60 +996,94 @@ function openSelfRegLink(){
   }
 }
 
-// ── Pending registrations ───────────────────────────────────
+function switchManageTab(tab) {
+  ['payment','extend','sublog','suspend','docs','credentials'].forEach(function(t) {
+    var panelId = 'panel' + t.charAt(0).toUpperCase() + t.slice(1);
+    var panel = document.getElementById(panelId);
+    if(panel) panel.style.display = t===tab ? 'block' : 'none';
+    var btn = document.getElementById('tab' + t.charAt(0).toUpperCase() + t.slice(1));
+    if(btn){
+      btn.style.background = t===tab ? 'var(--accent)' : 'var(--surface2)';
+      btn.style.color = t===tab ? 'var(--bg)' : 'var(--text2)';
+      btn.style.fontWeight = t===tab ? '700' : '600';
+    }
+  });
+  // Load sub log dynamically
+  if(tab==='sublog') loadSubLog();
+  // Load suspend panel state
+  if(tab==='suspend') loadSuspendPanel();
+}
+
+async function resetSchoolCredentials(){
+  var slug = document.getElementById('manageSlug').value;
+  var username = (document.getElementById('resetUsername').value||'').trim().toUpperCase();
+  var password = (document.getElementById('resetPassword').value||'').trim();
+  var displayName = (document.getElementById('resetDisplayName').value||'').trim() || 'Admin';
+  var role = (document.getElementById('resetRole').value)||'master';
+  var msgEl = document.getElementById('resetCredMsg');
+  if(!username||!password){
+    msgEl.textContent='Please enter both username and password.';
+    msgEl.style.display='block';msgEl.style.background='rgba(220,38,38,0.1)';msgEl.style.color='#dc2626';return;
+  }
+  if(password.length < 4){
+    msgEl.textContent='Password must be at least 4 characters.';
+    msgEl.style.display='block';msgEl.style.background='rgba(220,38,38,0.1)';msgEl.style.color='#dc2626';return;
+  }
+  if(!confirm('Reset login for '+slug+' to:\nUsername: '+username+'\nPassword: '+password+'?')) return;
+  try {
+    msgEl.textContent='Resetting...';msgEl.style.display='block';
+    msgEl.style.background='rgba(0,212,255,0.1)';msgEl.style.color='var(--accent)';
+    const r = await saApi('POST', '/super/schools/'+slug+'/reset-user', {username, password, displayName, role});
+    if(r.success){
+      msgEl.textContent='Reset successful! Login: '+username+' / '+password;
+      msgEl.style.background='rgba(5,150,105,0.1)';msgEl.style.color='#059669';
+      toast('Login credentials reset for '+slug,'success');
+    } else {
+      throw new Error(r.error||'Reset failed');
+    }
+  } catch(e){
+    msgEl.textContent='Error: '+e.message;
+    msgEl.style.background='rgba(220,38,38,0.1)';msgEl.style.color='#dc2626';
+    toast('Reset failed: '+e.message,'error');
+  }
+}
+
 async function loadPendingRegistrations(){
   try {
-    var pending = await saApi('GET', '/super/registrations/pending');
-    var card = document.getElementById('pendingRegCard');
-    var list = document.getElementById('pendingRegList');
-    var cnt  = document.getElementById('pendingCount');
-    if(!pending || !pending.length){ if(card) card.style.display='none'; return; }
+    var all = await saApi('GET', '/super/registrations/all');
+    var cutoff = Date.now() - 30 * 24 * 60 * 60 * 1000;
+    var recent = (all||[]).filter(function(s){ return new Date(s.registeredAt||s.createdAt) > cutoff; });
+    var card = document.getElementById('newRegCard');
+    var list = document.getElementById('newRegList');
+    var cnt  = document.getElementById('newRegCount');
+    if(!recent.length){ if(card) card.style.display='none'; return; }
     if(card) card.style.display='block';
-    if(cnt)  cnt.textContent = pending.length + ' pending';
+    if(cnt)  cnt.textContent = recent.length + ' this month';
     if(!list) return;
-    list.innerHTML = pending.map(function(s){
-      return '<div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;padding:14px 0;border-top:1px solid var(--border);">'
-        +'<div style="flex:1;">'
-        +'<div style="font-weight:700;font-size:14px;color:var(--text);margin-bottom:3px;">'+s.name+'</div>'
-        +'<div style="font-size:12px;color:var(--text3);">'
-        +(s.contactName?'<span style="margin-right:12px;">Contact: <strong style="color:var(--text2);">'+s.contactName+'</strong></span>':'')
-        +(s.phone?'<span style="margin-right:12px;">Tel: <strong style="color:var(--text2);">'+s.phone+'</strong></span>':'')
-        +(s.email?'<span>Email: <strong style="color:var(--text2);">'+s.email+'</strong></span>':'')
-        +'</div>'
-        +'<div style="font-size:11px;color:var(--text3);margin-top:3px;">Slug: <code style="background:rgba(0,212,255,0.1);padding:1px 6px;border-radius:4px;color:var(--accent);">'+s.slug+'</code>&nbsp; Registered: '+new Date(s.createdAt||Date.now()).toLocaleDateString()+'</div>'
-        +'</div>'
-        +'<div style="display:flex;gap:8px;flex-shrink:0;">'
-        +'<button class="btn btn-sm" style="background:rgba(5,150,105,0.15);color:#10b981;border:1px solid rgba(5,150,105,0.3);" onclick="approveRegistration(''+s.slug+'',''+s.name.replace(/'/g,"\'")+'')" >Approve</button>'
-        +'<button class="btn btn-sm btn-danger" onclick="rejectRegistration(''+s.slug+'',''+s.name.replace(/'/g,"\'")+'')">Reject</button>'
-        +'</div>'
-        +'</div>';
-    }).join('');
-  } catch(e){ console.warn('Pending reg error:', e.message); }
+    var html = '';
+    recent.forEach(function(s){
+      var expiry = s.planExpiry ? new Date(s.planExpiry) : null;
+      var daysLeft = expiry ? Math.ceil((expiry - new Date()) / 86400000) : 0;
+      var trialLabel = daysLeft > 0 ? 'Trial - ' + daysLeft + 'd left' : 'Expired';
+      html += '<div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;padding:12px 0;border-top:1px solid var(--border);">';
+      html += '<div style="flex:1;">';
+      html += '<div style="font-weight:700;font-size:14px;color:var(--text);margin-bottom:3px;">' + s.name + ' <span style="font-size:10px;font-weight:600;padding:2px 8px;border-radius:20px;background:rgba(52,211,153,0.1);color:var(--green);">' + trialLabel + '</span></div>';
+      html += '<div style="font-size:12px;color:var(--text3);">' + (s.contactName||'') + '  ' + (s.phone||'') + '</div>';
+      html += '<div style="font-size:11px;color:var(--text3);margin-top:2px;">Slug: ' + s.slug + ' &middot; Registered: ' + new Date(s.registeredAt||s.createdAt).toLocaleDateString() + '</div>';
+      html += '</div>';
+      html += '<button class="btn btn-sm btn-success reg-manage-btn" data-slug="' + s.slug + '" data-name="' + s.name.replace(/"/g,'&quot;') + '" data-plan="trial">Manage</button>';
+      html += '</div>';
+    });
+    list.innerHTML = html;
+    // Attach click handlers via data attributes — avoids quote nesting issues
+    list.querySelectorAll('.reg-manage-btn').forEach(function(btn){
+      btn.addEventListener('click', function(){
+        openManageSchool(this.dataset.slug, this.dataset.name, this.dataset.plan);
+      });
+    });
+  } catch(e){ console.warn('Registrations log error:', e.message); }
 }
 
-async function approveRegistration(slug, name){
-  var pw = prompt('Set login password for '+name+' (default SCHOOL2025):', 'SCHOOL2025');
-  if(pw === null) return;
-  if(!pw.trim()) pw = 'SCHOOL2025';
-  var days = parseInt(prompt('Trial access days (default 30):', '30'))||30;
-  try {
-    var r = await saApi('POST', '/super/registrations/'+slug+'/approve', {password: pw.trim(), days: days});
-    toast(r.message || (name+' approved'),'success');
-    loadDashboard();
-    loadPendingRegistrations();
-  } catch(e){ toast('Approve failed: '+e.message,'error'); }
-}
-
-async function rejectRegistration(slug, name){
-  if(!confirm('Reject and remove registration for '+name+'?')) return;
-  try {
-    await saApi('DELETE', '/super/registrations/'+slug);
-    toast('Registration rejected and removed','info');
-    loadPendingRegistrations();
-  } catch(e){ toast('Error: '+e.message,'error'); }
-}
-
-// Patch loadDashboard to also load pending registrations
 (function(){
   var _orig = loadDashboard;
   loadDashboard = async function(){
@@ -1110,6 +1091,7 @@ async function rejectRegistration(slug, name){
     loadPendingRegistrations();
   };
 })();
+
 </script>
 </body>
 </html>
