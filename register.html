@@ -131,19 +131,21 @@ h2{font-size:20px;font-weight:800;color:#fff;margin-bottom:6px;text-align:center
   <!-- Success Screen -->
   <div class="success-screen" id="successScreen">
     <div class="success-icon">✓</div>
-    <h3>Registration Received!</h3>
-    <p>Thank you for registering <strong id="successSchoolName" style="color:#fff;"></strong>.<br><br>
-    Our team will contact <strong id="successContact" style="color:#fff;"></strong> within <strong style="color:#00d4ff;">24 hours</strong> to set up your account and get you started.<br><br>
-    For immediate assistance call <strong style="color:#00d4ff;">0538 350 574</strong> or WhatsApp us.</p>
-    <div style="margin-top:24px;padding:14px;background:rgba(0,212,255,0.05);border:1px solid rgba(0,212,255,0.15);border-radius:10px;">
-      <div style="font-size:11px;color:rgba(255,255,255,0.4);margin-bottom:4px;">What happens next</div>
-      <div style="font-size:13px;color:rgba(255,255,255,0.7);line-height:1.8;">
-        1. We review your registration<br>
-        2. We call you to confirm details<br>
-        3. We send your login URL and password<br>
-        4. You start your 30-day free trial
-      </div>
+    <h3>You're Live!</h3>
+    <p><strong id="successSchoolName" style="color:#fff;"></strong> has been activated.<br><br>
+    Your login details have been sent via SMS to <strong id="successContact" style="color:#fff;"></strong>.<br><br>
+    Your <strong style="color:#00d4ff;">30-day free trial</strong> starts now.</p>
+
+    <div id="successLoginBox" style="display:none;margin-top:20px;background:rgba(0,212,255,0.07);border:1px solid rgba(0,212,255,0.25);border-radius:12px;padding:18px;text-align:left;">
+      <div style="font-size:10px;font-weight:800;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;">Your Login Details</div>
+      <div style="font-size:12px;color:rgba(255,255,255,0.6);margin-bottom:6px;">Username: <strong style="color:#fff;">ADMIN</strong></div>
+      <div style="font-size:12px;color:rgba(255,255,255,0.6);margin-bottom:10px;">Password: <strong style="color:#fff;">Check your SMS</strong></div>
+      <div style="font-size:11px;color:rgba(255,255,255,0.4);margin-bottom:6px;">Login URL</div>
+      <div id="successLoginUrl" style="font-size:12px;color:#00d4ff;word-break:break-all;cursor:pointer;" onclick="window.open(this.textContent,'_blank')"></div>
+      <button onclick="window.open(document.getElementById('successLoginUrl').textContent,'_blank')" style="margin-top:14px;width:100%;padding:12px;background:linear-gradient(135deg,#00a8cc,#00d4ff);border:none;border-radius:8px;color:#000;font-weight:800;font-size:14px;cursor:pointer;font-family:Sora,sans-serif;">Open My School App</button>
     </div>
+
+    <p style="font-size:12px;color:rgba(255,255,255,0.35);margin-top:16px;">Need help? Call <strong style="color:#00d4ff;">0538 350 574</strong></p>
   </div>
 </div>
 
