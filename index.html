@@ -274,10 +274,12 @@ td{padding:10px 14px;border-bottom:1px solid var(--border);}
 
     <!-- TAB NAVIGATION -->
     <div style="display:flex;gap:0;margin-bottom:24px;border-bottom:1px solid var(--border);">
-      <button onclick="switchManageTab('payment')" id="tabPayment" style="padding:10px 20px;background:var(--accent);color:var(--bg);border:none;font-family:Sora,sans-serif;font-size:13px;font-weight:700;cursor:pointer;border-radius:6px 6px 0 0;">Payment</button>
-      <button onclick="switchManageTab('extend')" id="tabExtend" style="padding:10px 20px;background:var(--surface2);color:var(--text2);border:none;font-family:Sora,sans-serif;font-size:13px;font-weight:600;cursor:pointer;border-radius:6px 6px 0 0;">Extend Access</button>
-      <button onclick="switchManageTab('docs')" id="tabDocs" style="padding:10px 20px;background:var(--surface2);color:var(--text2);border:none;font-family:Sora,sans-serif;font-size:13px;font-weight:600;cursor:pointer;border-radius:6px 6px 0 0;">Documents</button>
-      <button onclick="switchManageTab('credentials')" id="tabCredentials" style="padding:10px 20px;background:var(--surface2);color:var(--text2);border:none;font-family:Sora,sans-serif;font-size:13px;font-weight:600;cursor:pointer;border-radius:6px 6px 0 0;">Reset Login</button>
+      <button onclick="switchManageTab('payment')" id="tabPayment" style="padding:10px 16px;background:var(--accent);color:var(--bg);border:none;font-family:Sora,sans-serif;font-size:12px;font-weight:700;cursor:pointer;border-radius:6px 6px 0 0;">Payment</button>
+      <button onclick="switchManageTab('extend')" id="tabExtend" style="padding:10px 16px;background:var(--surface2);color:var(--text2);border:none;font-family:Sora,sans-serif;font-size:12px;font-weight:600;cursor:pointer;border-radius:6px 6px 0 0;">Extend</button>
+      <button onclick="switchManageTab('sublog')" id="tabSublog" style="padding:10px 16px;background:var(--surface2);color:var(--text2);border:none;font-family:Sora,sans-serif;font-size:12px;font-weight:600;cursor:pointer;border-radius:6px 6px 0 0;">Sub Log</button>
+      <button onclick="switchManageTab('suspend')" id="tabSuspend" style="padding:10px 16px;background:var(--surface2);color:var(--text2);border:none;font-family:Sora,sans-serif;font-size:12px;font-weight:600;cursor:pointer;border-radius:6px 6px 0 0;">Suspend</button>
+      <button onclick="switchManageTab('docs')" id="tabDocs" style="padding:10px 16px;background:var(--surface2);color:var(--text2);border:none;font-family:Sora,sans-serif;font-size:12px;font-weight:600;cursor:pointer;border-radius:6px 6px 0 0;">Docs</button>
+      <button onclick="switchManageTab('credentials')" id="tabCredentials" style="padding:10px 16px;background:var(--surface2);color:var(--text2);border:none;font-family:Sora,sans-serif;font-size:12px;font-weight:600;cursor:pointer;border-radius:6px 6px 0 0;">Reset Login</button>
     </div>
 
     <!-- PAYMENT TAB -->
@@ -389,6 +391,33 @@ td{padding:10px 14px;border-bottom:1px solid var(--border);}
         </div>
       </div>
       <div id="resetCredMsg" style="display:none;padding:10px 14px;border-radius:8px;font-size:13px;margin-top:8px;"></div>
+
+    <!-- SUBSCRIPTION LOG TAB -->
+    <div id="panelSublog" style="display:none;">
+      <div style="font-size:13px;color:var(--text2);margin-bottom:14px;">Full subscription history for this school — registrations, approvals, payments, reminders, and suspensions.</div>
+      <div id="subLogList" style="max-height:340px;overflow-y:auto;"></div>
+    </div>
+
+    <!-- SUSPEND / REINSTATE TAB -->
+    <div id="panelSuspend" style="display:none;">
+      <div id="suspendStatusBar" style="padding:12px 14px;border-radius:8px;margin-bottom:16px;font-size:13px;font-weight:600;"></div>
+      <div id="suspendPanel">
+        <p style="font-size:13px;color:var(--text2);margin-bottom:14px;">Suspending removes all access immediately. The school's data is preserved and can be reinstated at any time when payment is received.</p>
+        <div class="form-field" style="margin-bottom:12px;">
+          <label>Reason for Suspension</label>
+          <input type="text" id="suspendReason" placeholder="e.g. No payment received after expiry" style="width:100%;padding:10px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:Sora,sans-serif;font-size:13px;outline:none;">
+        </div>
+        <button class="btn btn-danger" onclick="suspendSchool()">Suspend School</button>
+      </div>
+      <div id="reinstatePanel" style="display:none;">
+        <p style="font-size:13px;color:var(--text2);margin-bottom:14px;">Reinstate this school's access after payment is confirmed.</p>
+        <div class="form-field" style="margin-bottom:12px;">
+          <label>Extend Access By (days)</label>
+          <input type="number" id="reinstateDays" value="30" min="1" style="width:100%;padding:10px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:Sora,sans-serif;font-size:13px;outline:none;">
+        </div>
+        <button class="btn btn-primary" onclick="reinstateSchool()">Reinstate Access</button>
+      </div>
+    </div>
       <div style="display:flex;gap:10px;margin-top:16px;">
         <button class="btn btn-danger" onclick="resetSchoolCredentials()">Reset Login Credentials</button>
         <button class="btn btn-secondary" onclick="closeModal('manageModal')">Close</button>
@@ -399,16 +428,21 @@ td{padding:10px 14px;border-bottom:1px solid var(--border);}
 
 <script>
 function switchManageTab(tab) {
-  ['payment','extend','docs','credentials'].forEach(function(t) {
-    var panel = document.getElementById('panel'+t.charAt(0).toUpperCase()+t.slice(1));
+  ['payment','extend','sublog','suspend','docs','credentials'].forEach(function(t) {
+    var panelId = 'panel' + t.charAt(0).toUpperCase() + t.slice(1);
+    var panel = document.getElementById(panelId);
     if(panel) panel.style.display = t===tab ? 'block' : 'none';
-    var btn = document.getElementById('tab'+t.charAt(0).toUpperCase()+t.slice(1));
+    var btn = document.getElementById('tab' + t.charAt(0).toUpperCase() + t.slice(1));
     if(btn){
       btn.style.background = t===tab ? 'var(--accent)' : 'var(--surface2)';
       btn.style.color = t===tab ? 'var(--bg)' : 'var(--text2)';
       btn.style.fontWeight = t===tab ? '700' : '600';
     }
   });
+  // Load sub log dynamically
+  if(tab==='sublog') loadSubLog();
+  // Load suspend panel state
+  if(tab==='suspend') loadSuspendPanel();
 }
 
 async async function resetSchoolCredentials(){
@@ -894,6 +928,112 @@ window.addEventListener('DOMContentLoaded', function() {
   }
 });
 
+
+// ── Log Payment / Renew ─────────────────────────────────────
+async function logPayment(){
+  var slug = document.getElementById('manageSlug').value;
+  var amount = parseFloat(document.getElementById('payAmount').value)||0;
+  var plan   = document.getElementById('payPlan').value;
+  var months = parseInt(document.getElementById('payMonths').value)||1;
+  var notes  = (document.getElementById('payNotes')||{value:''}).value;
+  var msgEl  = document.getElementById('payMsg');
+  if(!amount){ if(msgEl){msgEl.textContent='Please enter payment amount';msgEl.style.display='block';msgEl.style.color='var(--red)';} return; }
+  try {
+    if(msgEl){msgEl.textContent='Saving...';msgEl.style.display='block';msgEl.style.color='var(--accent)';}
+    var r = await saApi('POST', '/super/schools/'+slug+'/payment', {amount, plan, months, notes});
+    if(msgEl){msgEl.textContent=r.message;msgEl.style.color='var(--green)';}
+    toast(r.message,'success');
+    loadDashboard();
+  } catch(e){ if(msgEl){msgEl.textContent=e.message;msgEl.style.color='var(--red)';} toast(e.message,'error'); }
+}
+
+// ── Subscription Log ─────────────────────────────────────────
+async function loadSubLog(){
+  var slug = document.getElementById('manageSlug').value;
+  var listEl = document.getElementById('subLogList');
+  if(!listEl) return;
+  listEl.innerHTML = '<div style="color:var(--text3);font-size:13px;">Loading...</div>';
+  try {
+    var r = await saApi('GET', '/super/schools/'+slug+'/sublog');
+    var log = (r.subscriptionLog||[]).slice().reverse();
+    if(!log.length){ listEl.innerHTML='<div style="color:var(--text3);font-size:13px;padding:20px 0;">No subscription history yet.</div>'; return; }
+    var eventColors = {
+      registered:'#60a5fa', approved:'#34d399', renewed:'#34d399',
+      reminder_sent:'#f59e0b', suspended:'#f87171', expired:'#f87171', reinstated:'#34d399'
+    };
+    listEl.innerHTML = log.map(function(e){
+      var color = eventColors[e.event]||'var(--accent)';
+      var label = e.event.replace('_',' ').replace(/\w/g,function(c){return c.toUpperCase();});
+      return '<div style="display:flex;gap:12px;padding:12px 0;border-bottom:1px solid var(--border);">'
+        +'<div style="width:8px;height:8px;border-radius:50%;background:'+color+';flex-shrink:0;margin-top:5px;"></div>'
+        +'<div style="flex:1;">'
+        +'<div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:4px;">'
+        +'<span style="font-weight:700;font-size:13px;color:'+color+';">'+label+'</span>'
+        +'<span style="font-size:11px;color:var(--text3);">'+new Date(e.at).toLocaleString()+'</span>'
+        +'</div>'
+        +(e.plan?'<div style="font-size:12px;color:var(--text2);margin-top:2px;">Plan: <strong>'+e.plan+'</strong>'+(e.amount?' · Amount: <strong style="font-family:Outfit,sans-serif;">GHS '+e.amount+'</strong>':'')+'</div>':'')
+        +(e.notes?'<div style="font-size:12px;color:var(--text3);margin-top:2px;">'+e.notes+'</div>':'')
+        +(e.by?'<div style="font-size:10px;color:var(--text3);margin-top:2px;">By: '+e.by+'</div>':'')
+        +'</div></div>';
+    }).join('');
+  } catch(err){ listEl.innerHTML='<div style="color:var(--red);font-size:13px;">'+err.message+'</div>'; }
+}
+
+// ── Suspend / Reinstate ────────────────────────────────────
+function loadSuspendPanel(){
+  // We check the current status from the schools table
+  var slug = document.getElementById('manageSlug').value;
+  var statusBar = document.getElementById('suspendStatusBar');
+  var suspPanel = document.getElementById('suspendPanel');
+  var reinPanel = document.getElementById('reinstatePanel');
+  // Find school in current data
+  var row = Array.from(document.querySelectorAll('#schoolsTable tr')).find(function(tr){
+    return tr.innerHTML.indexOf(slug) !== -1;
+  });
+  var isSuspended = row && (row.innerHTML.indexOf('Suspended')!==-1 || row.innerHTML.indexOf('Expired')!==-1);
+  if(isSuspended){
+    if(statusBar){statusBar.textContent='This school is currently suspended / expired.';statusBar.style.background='rgba(220,38,38,0.1)';statusBar.style.color='#f87171';}
+    if(suspPanel) suspPanel.style.display='none';
+    if(reinPanel) reinPanel.style.display='block';
+  } else {
+    if(statusBar){statusBar.textContent='This school is currently active.';statusBar.style.background='rgba(5,150,105,0.1)';statusBar.style.color='#34d399';}
+    if(suspPanel) suspPanel.style.display='block';
+    if(reinPanel) reinPanel.style.display='none';
+  }
+}
+
+async function suspendSchool(){
+  var slug   = document.getElementById('manageSlug').value;
+  var reason = (document.getElementById('suspendReason')||{value:''}).value.trim() || 'Manually suspended';
+  if(!confirm('Suspend '+slug+'? They will lose all access immediately. Data is preserved.')) return;
+  try {
+    var r = await saApi('POST', '/super/schools/'+slug+'/suspend', {reason});
+    toast(r.message,'success');
+    closeModal('manageModal');
+    loadDashboard();
+  } catch(e){ toast(e.message,'error'); }
+}
+
+async function reinstateSchool(){
+  var slug = document.getElementById('manageSlug').value;
+  var days = parseInt((document.getElementById('reinstateDays')||{value:'30'}).value)||30;
+  if(!confirm('Reinstate '+slug+' for '+days+' days?')) return;
+  try {
+    var r = await saApi('POST', '/super/schools/'+slug+'/reinstate', {days});
+    toast(r.message,'success');
+    closeModal('manageModal');
+    loadDashboard();
+  } catch(e){ toast(e.message,'error'); }
+}
+
+// ── Manual scheduler run ──────────────────────────────────
+async function runScheduler(){
+  try {
+    var r = await saApi('POST', '/super/scheduler/run');
+    toast('Scheduler: '+r.reminders+' reminders · '+r.suspended+' suspended'+(r.errors&&r.errors.length?' · '+r.errors.length+' errors':''),'success');
+    loadDashboard();
+  } catch(e){ toast('Scheduler error: '+e.message,'error'); }
+}
 
 // ── Self-reg link ───────────────────────────────────────────
 function openSelfRegLink(){
