@@ -110,16 +110,16 @@ td{padding:10px 14px;border-bottom:1px solid var(--border);}
   </div>
   <div class="main">
     <div class="stats-grid" id="statsGrid"></div>
-    <!-- Pending Registrations -->
-    <div class="card" id="pendingRegCard" style="display:none;border-color:rgba(245,158,11,0.4);">
+    <!-- New Registrations Log -->
+    <div class="card" id="newRegCard" style="display:none;border-color:rgba(52,211,153,0.3);">
       <div class="card-header">
         <div>
-          <div class="card-title" style="color:var(--gold);">Pending School Registrations</div>
-          <div style="font-size:12px;color:var(--text3);">Schools that signed up via the self-registration form — review and approve</div>
+          <div class="card-title" style="color:var(--green);">New Registrations</div>
+          <div style="font-size:12px;color:var(--text3);">Schools that self-registered and were auto-activated in the last 30 days</div>
         </div>
-        <span id="pendingCount" style="background:rgba(245,158,11,0.2);color:var(--gold);font-weight:800;padding:4px 12px;border-radius:20px;font-size:13px;"></span>
+        <span id="newRegCount" style="background:rgba(52,211,153,0.15);color:var(--green);font-weight:800;padding:4px 12px;border-radius:20px;font-size:13px;"></span>
       </div>
-      <div id="pendingRegList"></div>
+      <div id="newRegList"></div>
     </div>
 
     <div class="card">
